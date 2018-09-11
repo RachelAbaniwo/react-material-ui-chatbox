@@ -8,8 +8,11 @@ const socketServer = http.createServer(app)
 
 const io = socketio.listen(socketServer)
 
-io.on('connection', () => {
-  console.log('A USER JUST CONNECTED.')
+io.on('connection', socket => {
+  console.log('user connected.')
+  socket.on('NEW_MESSAGE', payload => {
+    io.emit('NEW_MESSAGE_RECEIVED', payload)
+  })
 })
 
 socketServer.listen(4200, () => console.log('App running on port 4200'))

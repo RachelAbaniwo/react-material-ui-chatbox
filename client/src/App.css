@@ -15,4 +15,15 @@
   height: 400px;
   border: 1px solid black;
   width: 500px;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+.chatMessage {
+  position: absolute;
+  bottom: 0;
+}
+.messages {
+  list-style-type: none;
 }

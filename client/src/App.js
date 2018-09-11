@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import socketio from 'socket.io-client'
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import './App.css';
 
@@ -9,7 +8,20 @@ class App extends Component {
 
   state = {
     username: '',
-    chatting: false
+    chatting: false,
+    message: '',
+    messages: []
+  }
+
+  componentDidMount() {
+    this.io.on('NEW_MESSAGE_RECEIVED', payload => {
+      this.setState({
+        messages: [
+          ...this.state.messages,
+          payload
+        ]
+      })
+    })
   }
 
   startChatting = () => {
@@ -22,6 +34,16 @@ class App extends Component {
 
   io = socketio('http://localhost:4200')
 
+  sendMessage = () => {
+    this.setState({
+      message: ''
+    })
+    this.io.emit('NEW_MESSAGE', {
+      username: this.state.username,
+      message: this.state.message
+    })
+  }
+
   render() {
     return (
       <div className="chatApp">
@@ -33,7 +55,13 @@ class App extends Component {
             </div> :
 
             <div className="chatBox">
-              
+              <ul className="messages">
+                {this.state.messages.map(message => <li><b>{message.username}</b>  {message.message}</li>)}
+              </ul>
+              <div className="chatMessage">
+                <TextField value={this.state.message} onChange={event => this.setState({ message: event.target.value })} placeholder="Send a message ...." type="text" />
+                <IconButton onClick={this.sendMessage} color="secondary">Go!</IconButton>
+              </div> 
             </div>
         }
       </div>
